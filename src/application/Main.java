@@ -13,8 +13,9 @@ import database.Database;
 public class Main {
 
 	public static void main(String[] args) {
-		createSeller();
+		//createSeller();
 		//readAllDepartment();
+		updateSellerSalary();
 	}
 	
 	public static void readAllDepartment() {
@@ -78,6 +79,30 @@ public class Main {
 			Database.closeStatement(preparedStatement);
 			Database.closeConnection();
 		}
+	}
+	
+	public static void updateSellerSalary() {
+		Connection conn = null;
+		PreparedStatement preparedStatement = null;
+		
+		try {
+			conn = Database.getConnection();
+			preparedStatement = conn.prepareStatement("UPDATE seller "
+													+ "SET BaseSalary = BaseSalary + ? "
+													+ "WHERE (DepartmentId = ?)");
+			preparedStatement.setDouble(1, 200.0);
+			preparedStatement.setInt(2, 2);
+			
+			int rowsAffected = preparedStatement.executeUpdate();
+			
+			System.out.println("Rows affected: " + rowsAffected);
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			Database.closeStatement(preparedStatement);
+			Database.closeConnection();
+		}
+		
 	}
 
 }
