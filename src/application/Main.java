@@ -9,13 +9,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import database.Database;
+import database.DatabaseIntegrityException;
 
 public class Main {
 
 	public static void main(String[] args) {
 		//createSeller();
 		//readAllDepartment();
-		updateSellerSalary();
+		//updateSellerSalary();
+		deleteDepartment();
 	}
 	
 	public static void readAllDepartment() {
@@ -103,6 +105,28 @@ public class Main {
 			Database.closeConnection();
 		}
 		
+	}
+	
+	public static void deleteDepartment() {
+		Connection conn = null;
+		PreparedStatement preparedStatement = null;
+		
+		try {
+			conn = Database.getConnection();
+			
+			preparedStatement = conn.prepareStatement("DELETE FROM department"
+													+ "WHERE Id = ?");
+			preparedStatement.setInt(1, 2);
+			
+			int rowsAffected = preparedStatement.executeUpdate();
+			
+			System.out.println("Rows affected: " + rowsAffected);
+		} catch(SQLException e) {
+			throw new DatabaseIntegrityException(e.getMessage());
+		} finally {
+			Database.closeStatement(preparedStatement);
+			Database.closeConnection();
+		}
 	}
 
 }
