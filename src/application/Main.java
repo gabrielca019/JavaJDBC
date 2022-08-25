@@ -14,12 +14,12 @@ import database.DatabaseIntegrityException;
 
 public class Main {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) { //por algum motivo so funfa um metodo por vez
 		//createSeller();
 		//readAllDepartment();
 		//updateSellerSalary();
 		//deleteDepartment();
-		transation();
+		//transaction();
 	}
 	
 	public static void readAllDepartment() {
@@ -131,7 +131,7 @@ public class Main {
 		}
 	}
 	
-	public static void transation() {
+	public static void transaction() {
 		Connection conn = null;
 		Statement statement = null;
 		
