@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import database.Database;
+import database.DatabaseException;
 import database.DatabaseIntegrityException;
 
 public class Main {
@@ -17,7 +18,8 @@ public class Main {
 		//createSeller();
 		//readAllDepartment();
 		//updateSellerSalary();
-		deleteDepartment();
+		//deleteDepartment();
+		transation();
 	}
 	
 	public static void readAllDepartment() {
@@ -125,6 +127,40 @@ public class Main {
 			throw new DatabaseIntegrityException(e.getMessage());
 		} finally {
 			Database.closeStatement(preparedStatement);
+			Database.closeConnection();
+		}
+	}
+	
+	public static void transation() {
+		Connection conn = null;
+		Statement statement = null;
+		
+		try {
+			conn = Database.getConnection();
+			conn.setAutoCommit(false); //faz com que todos comandos sql sejam agrupados num "grupo", assim executando todos de uma unica vez posteriormente com o commit ou voltando atras com o rollback
+			
+			statement = conn.createStatement();
+			
+			int rows1 = statement.executeUpdate("UPDATE seller "
+											  + "SET BaseSalary = 2090 "
+											  + "WHERE DepartmentId = 1");
+
+			int rows2 = statement.executeUpdate("UPDATE seller "
+											  + "SET BaseSalary = 3090 "
+											  + "WHERE DepartmentId = 2");
+			
+			conn.commit();
+			System.out.println("rows 1: " + rows1);
+			System.out.println("rows 2: " + rows2);
+		} catch(SQLException e) {
+			try {
+				conn.rollback();
+				throw new DatabaseException("Transaction rolled back! Caused by: " + e.getMessage());
+			} catch (SQLException e1) {
+				throw new DatabaseException("Error trying to rollback! Caused by: " + e1.getMessage());
+			}
+		} finally {
+			Database.closeStatement(statement);
 			Database.closeConnection();
 		}
 	}
